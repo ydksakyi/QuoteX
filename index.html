@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>QuoteX — Random Quote Generator</title>
+		<link rel="stylesheet" href="style.css" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap"
+			rel="stylesheet" />
+	</head>
+	<body>
+		<header>
+			<div class="masthead">Quote<span>X</span></div>
+			<div class="issue-label">Daily wisdom edition</div>
+		</header>
+
+		<main>
+			<section class="quote-stage" id="quoteStage">
+				<div class="category-tag" id="categoryTag">Philosophy</div>
+				<div class="opening-mark">&ldquo;</div>
+				<p class="quote-text" id="quoteText">
+					The unexamined life is not worth living.
+				</p>
+				<div class="attribution-row">
+					<div class="attr-line"></div>
+					<div>
+						<div class="author-name" id="authorName">Socrates</div>
+						<div class="author-bio" id="authorBio">
+							Greek philosopher, 470–399 BC
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<aside class="sidebar">
+				<button class="btn-new" id="newQuoteBtn">
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+						<path
+							d="M13.65 2.35A8 8 0 1 0 15 8"
+							stroke="currentColor"
+							stroke-width="1.5"
+							stroke-linecap="round" />
+						<path
+							d="M12 2h2v2"
+							stroke="currentColor"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round" />
+					</svg>
+					New Quote
+				</button>
+
+				<div>
+					<div class="filter-label">Filter by category</div>
+					<div class="category-filters" id="categoryFilters"></div>
+				</div>
+
+				<div class="divider"></div>
+
+				<div class="share-section">
+					<div class="filter-label" style="margin-bottom: 0.75rem">
+						Share quote
+					</div>
+					<div class="share-row">
+						<button class="share-btn" id="copyBtn">Copy text</button>
+						<button class="share-btn" id="tweetBtn">Twitter</button>
+					</div>
+				</div>
+
+				<div class="counter-strip">
+					<div class="counter-label">Quotes explored</div>
+					<div class="counter-num" id="counter">1 <span>of 30</span></div>
+				</div>
+			</aside>
+		</main>
+
+		<footer>
+			<div class="footer-text">Curated wisdom &mdash; refreshed daily</div>
+			<div class="progress-bar">
+				<div class="progress-fill" id="progressFill" style="width: 3.3%"></div>
+			</div>
+		</footer>
+
+		<div class="toast" id="toast">Copied to clipboard!</div>
+		<script src="script.js"></script>
+	</body>
+</html>
