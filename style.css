@@ -237,9 +237,6 @@ main {
 	border-color: var(--ink);
 }
 
-.share-section {
-}
-
 .share-row {
 	display: flex;
 	gap: 0.6rem;
