@@ -1767,6 +1767,12 @@ document.getElementById('tweetBtn').onclick = () => {
 	window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
 };
 
+if ('serviceWorker' in navigator) {
+	window.addEventListener('load', () => {
+		navigator.serviceWorker.register('./sw.js').catch(() => {});
+	});
+}
+
 buildFilters();
 exploredCount = 1;
 document.getElementById('counter').innerHTML = `1 <span>explored</span>`;

@@ -1,0 +1,28 @@
+{
+	"name": "QuoteX — Daily Wisdom",
+	"short_name": "QuoteX",
+	"description": "A minimalist random quote generator with curated wisdom, category filtering, and sharing.",
+	"start_url": "./index.html",
+	"scope": "./",
+	"display": "standalone",
+	"orientation": "portrait-primary",
+	"background_color": "#f5f0e8",
+	"theme_color": "#f5f0e8",
+	"lang": "en",
+	"author": "Sakyi",
+	"categories": ["lifestyle", "education", "books"],
+	"icons": [
+		{
+			"src": "./icon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		},
+		{
+			"src": "./icon-maskable.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "maskable"
+		}
+	]
+}
