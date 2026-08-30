@@ -21,6 +21,8 @@
 - [Getting Started](#getting-started)
 - [Customizing the Quotes](#customizing-the-quotes)
 - [Design & Accessibility](#design--accessibility)
+- [Progressive Web App (PWA)](#progressive-web-app-pwa)
+- [Search Engine Optimization (SEO)](#search-engine-optimization-seo)
 - [Browser Support](#browser-support)
 - [License](#license)
 
@@ -57,7 +59,8 @@ The interface is built like a literary "daily wisdom edition" masthead:
 
 - **HTML5** — semantic structure (`header`, `main`, `section`, `aside`, `footer`).
 - **CSS3** — custom properties (design tokens), CSS Grid, keyframe animations, and a mobile media query. Google Fonts (Playfair Display + DM Sans) and Font Awesome icons are loaded via CDN.
-- **Vanilla JavaScript (ES6+)** — no frameworks, no build step, no dependencies. Uses `const`/`let`, arrow functions, template literals, `Set`, and the Clipboard API.
+- **Vanilla JavaScript (ES6+)** — no frameworks, no build step, no dependencies. Uses `const`/`let`, arrow functions, template literals, `Set`, the Clipboard API, and the Service Worker API.
+- **PWA primitives** — a web app manifest (`manifest.webmanifest`) and a service worker (`sw.js`) for installability and offline use.
 
 No backend, no database, and no network calls are made for the core experience (only the optional CDN font/icon assets and the Twitter share link).
 
@@ -67,10 +70,14 @@ No backend, no database, and no network calls are made for the core experience (
 
 ```
 QuoteX/
-├── index.html   # Markup: structure, masthead, quote stage, sidebar, footer, toast
-├── style.css    # All styling: design tokens, layout, typography, animations, responsive rules
-├── script.js    # All behavior: quote data, selection logic, filtering, sharing, UI updates
-└── README.md    # This documentation
+├── index.html            # Markup + SEO meta (OG/Twitter/JSON-LD), manifest link, masthead, quote stage, sidebar, footer, toast
+├── style.css             # All styling: design tokens, layout, typography, animations, responsive rules
+├── script.js             # Behavior: quote data, selection logic, filtering, sharing, UI updates, service-worker registration
+├── manifest.webmanifest  # PWA manifest: name, icons, standalone display, theme colors
+├── sw.js                 # Service worker: app-shell caching for offline support
+├── icon.svg              # PWA icon (any purpose)
+├── icon-maskable.svg     # PWA icon (maskable purpose)
+└── README.md             # This documentation
 ```
 
 ---
@@ -170,6 +177,37 @@ To change the visual theme, edit the CSS custom properties at the top of `style.
 - **Iconography**: Font Awesome is used for the refresh icon; icons carry `aria-hidden` and the buttons have text labels for screen readers.
 
 ---
+
+## Progressive Web App (PWA)
+
+QuoteX is installable and works offline thanks to two additions:
+
+- **Web App Manifest** (`manifest.webmanifest`) — defines the app name, `standalone` display mode, theme/background colors, start URL, and icons (`icon.svg` for general use, `icon-maskable.svg` for maskable/safe-zone use).
+- **Service Worker** (`sw.js`) — registered in `script.js` on `window.load`. It precaches the app shell (`index.html`, `style.css`, `script.js`, manifest, and icons) on install, cleans up old caches on activate, and serves a cache-first / network-fallback strategy on `fetch`, falling back to `index.html` when offline.
+
+### Requirements to run as a PWA
+
+1. **Serve over HTTPS or `localhost`** — service workers do not register from `file://`. Use a local server, e.g.:
+
+   ```bash
+   python3 -m http.server 8000
+   ```
+
+   then open `http://localhost:8000`.
+2. **Icons** — the SVG icons satisfy most modern browsers. For maximum install compatibility on all platforms, add **192px and 512px PNG** icons and list them in the manifest's `icons` array.
+
+The core experience (quotes, filtering, UI) is fully functional offline once cached. External CDN assets (Google Fonts, Font Awesome) load over the network and gracefully degrade to system fonts/fallback icons when offline.
+
+## Search Engine Optimization (SEO)
+
+The page is SEO-ready out of the box via meta tags and structured data in `index.html`:
+
+- **Standard meta** — `description`, `keywords`, `author`, `robots`, `theme-color`, and a `canonical` link.
+- **Open Graph** — `og:type`, `og:title`, `og:description`, `og:site_name`, `og:url`, `og:image` for rich Facebook/Discord/LinkedIn previews.
+- **Twitter Card** — `twitter:card` (summary_large_image), `twitter:title`, `twitter:description`, `twitter:image` for share previews on X.
+- **Structured data** — a JSON-LD `WebApplication` block describing the app for search engines.
+
+> **Before deploying**, replace the placeholder `https://quotex.example.com/` URLs (canonical, OG, Twitter image) in `index.html` with your real domain, and host a real `og-image.png` (1200×630 recommended). Note that quotes are injected by JavaScript, so only the first static quote in the HTML is crawler-visible; for full quote indexing, add server-side rendering or a sitemap/prerender.
 
 ## Browser Support
 
