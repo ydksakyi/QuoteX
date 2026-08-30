@@ -184,4 +184,4 @@ This project is provided as-is for learning and personal use. Quote texts are at
 
 ---
 
-_Designed and built by Daniel Yirenkyi._
+_Designed and built by Sakyi._
