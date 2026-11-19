@@ -1811,11 +1811,11 @@ document.getElementById('copyBtn').onclick = async () => {
 	}
 };
 
-document.getElementById('whatsappBtn').onclick = () => {
+document.getElementById('tweetBtn').onclick = () => {
 	const text = encodeURIComponent(
 		`"${currentQuote.text}" — ${currentQuote.author}`,
 	);
-	window.open(`https://wa.me/?text=${text}`, '_blank');
+	window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
 };
 
 if ('serviceWorker' in navigator) {

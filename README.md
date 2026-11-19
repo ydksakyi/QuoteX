@@ -2,7 +2,7 @@
 
 > A minimalist, typography-driven random quote generator that serves curated wisdom from philosophers, poets, leaders, and proverbs — with category filtering, author attribution, and one-click sharing.
 
-**QuoteX** is a fully client-side web app that displays a single, beautifully set quote at a time. Each quote is attributed to its author with a short biographical note, tagged by theme (category), and can be copied or shared to WhatsApp. A "New Quote" button reveals the next quote, an explored-counter and progress bar track how much of the collection you have seen, and category pills let you narrow the feed to a mood or topic.
+**QuoteX** is a fully client-side web app that displays a single, beautifully set quote at a time. Each quote is attributed to its author with a short biographical note, tagged by theme (category), and can be copied or shared to Twitter. A "New Quote" button reveals the next quote, an explored-counter and progress bar track how much of the collection you have seen, and category pills let you narrow the feed to a mood or topic.
 
 ---
 
@@ -37,7 +37,7 @@
 | **Category-based filtering**    | Filter the feed by theme — Philosophy, Resilience, Love, Courage, Wisdom, Work, Life, Humor, and many more (auto-derived from the data). An _All_ option shows the entire collection.                             |
 | **Author attribution with bio** | Every quote shows the author's name and a short contextual bio (e.g. "Greek philosopher, 470–399 BC"), giving the words a human background.                                                                       |
 | **Copy-to-clipboard**           | Copies the formatted quote + author to the clipboard using the modern Clipboard API, with a legacy `textarea`/`execCommand` fallback for older browsers.                                                          |
-| **WhatsApp sharing**            | Opens a pre-filled WhatsApp message with the quote and author, ready to send.                                                                                                                                     |
+| **Twitter sharing**             | Opens a pre-filled Twitter (X) intent tweet with the quote and author, ready to post.                                                                                                                             |
 | **Progress tracking**           | A counter shows how many quotes you have explored, and a footer progress bar fills as you work through the currently filtered set.                                                                                |
 | **Toast notifications**         | Lightweight, auto-dismissing toast confirms copy actions for clear UI feedback.                                                                                                                                   |
 | **Responsive design**           | A two-column editorial layout on desktop collapses into a single column on small screens (≤ 700px).                                                                                                               |
@@ -51,7 +51,7 @@ The interface is built like a literary "daily wisdom edition" masthead:
 
 - **Header** — the `QuoteX` wordmark and an issue label ("Daily wisdom edition").
 - **Main / Quote stage (left)** — the category tag, a large opening quotation mark, the quote text (Playfair Display serif), and the author attribution row (name + bio).
-- **Sidebar (right)** — the _New Quote_ button, category filter pills, share controls (Copy / WhatsApp), and the explored counter.
+- **Sidebar (right)** — the _New Quote_ button, category filter pills, share controls (Copy / Twitter), and the explored counter.
 - **Footer** — a tagline and the progress bar that reflects how much of the active set you have seen.
 
 ---
@@ -63,7 +63,7 @@ The interface is built like a literary "daily wisdom edition" masthead:
 - **Vanilla JavaScript (ES6+)** — no frameworks, no build step, no dependencies. Uses `const`/`let`, arrow functions, template literals, `Set`, the Clipboard API, and the Service Worker API.
 - **PWA primitives** — a web app manifest (`manifest.webmanifest`) and a service worker (`sw.js`) for installability and offline use.
 
-No backend, no database, and no network calls are made for the core experience (only the optional CDN font/icon assets and the WhatsApp share link).
+No backend, no database, and no network calls are made for the core experience (only the optional CDN font/icon assets and the Twitter share link).
 
 ---
 
@@ -127,7 +127,7 @@ The `nextQuote()` function drives subsequent random display:
 ### Sharing
 
 - **Copy** (`copyBtn`): builds `"<text>" — <author>` and writes it to the clipboard. It first checks for the modern Clipboard API (`navigator.clipboard.writeText`) and only uses it when available. If unavailable or rejected, it falls back to a temporary `textarea` + `document.execCommand('copy')`. Success is verified before showing the "Copied to clipboard!" toast; if both methods fail, an error toast ("Failed to copy quote.") is shown instead.
-- **WhatsApp** (`whatsappBtn`): URL-encodes the same string and opens `https://wa.me/?text=...` in a new tab.
+- **Twitter** (`tweetBtn`): URL-encodes the same string and opens `https://twitter.com/intent/tweet?text=...` in a new tab.
 
 ### State & UI Feedback
 
