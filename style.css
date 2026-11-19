@@ -13,7 +13,17 @@
 	--accent: #b5451b;
 	--accent-light: #d4673c;
 	--muted: #7a6f65;
-	--rule: rgba(26, 22, 20, 0.15);
+		--rule: rgba(26, 22, 20, 0.15);
+}
+
+button:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+a:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
 }
 
 body {
@@ -356,5 +366,53 @@ footer {
 	header,
 	footer {
 		padding: 1.5rem 1.5rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+@media (max-width: 390px) {
+	header,
+	footer {
+		padding: 1rem 1rem;
+	}
+	main {
+		padding: 0 1rem;
+	}
+	.quote-stage {
+		padding: 2rem 0 1.5rem;
+	}
+	.sidebar {
+		padding: 1.5rem 0;
+	}
+	.opening-mark {
+		font-size: 5rem;
+	}
+	.quote-text {
+		font-size: 1.6rem;
+	}
+}
+
+@media (min-width: 701px) and (max-width: 900px) {
+	main {
+		grid-template-columns: 1fr 280px;
+	}
+	.sidebar {
+		padding: 3rem 0 3rem 1.5rem;
+	}
+}
+
+@media (min-width: 1441px) {
+	main {
+		max-width: 1300px;
 	}
 }

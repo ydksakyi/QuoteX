@@ -30,17 +30,18 @@
 
 ## Features
 
-| Feature                         | Description                                                                                                                                                                                             |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Random quote generation**     | Press _New Quote_ to reveal the next quote. Selection is random but avoids immediate repeats and cycles through the full set before starting over, so you see everything without duplicates in a round. |
-| **Category-based filtering**    | Filter the feed by theme — Philosophy, Resilience, Love, Courage, Wisdom, Work, Life, Humor, and many more (auto-derived from the data). An _All_ option shows the entire collection.                   |
-| **Author attribution with bio** | Every quote shows the author's name and a short contextual bio (e.g. "Greek philosopher, 470–399 BC"), giving the words a human background.                                                             |
-| **Copy-to-clipboard**           | Copies the formatted quote + author to the clipboard using the modern Clipboard API, with a legacy `textarea`/`execCommand` fallback for older browsers.                                                |
-| **Twitter sharing**             | Opens a pre-filled Twitter (X) intent tweet with the quote and author, ready to post.                                                                                                                   |
-| **Progress tracking**           | A counter shows how many quotes you have explored, and a footer progress bar fills as you work through the currently filtered set.                                                                      |
-| **Toast notifications**         | Lightweight, auto-dismissing toast confirms copy actions for clear UI feedback.                                                                                                                         |
-| **Responsive design**           | A two-column editorial layout on desktop collapses into a single column on small screens (≤ 700px).                                                                                                     |
-| **Animated transitions**        | Quotes fade up into view and cross-fade on change for a calm, reading-friendly experience.                                                                                                              |
+| Feature                         | Description                                                                                                                                                                                                       |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Random quote generation**     | Press _New Quote_ to reveal the next quote. Selection is random but avoids duplicates within a cycle and cycles through the full set before starting over.                                                        |
+| **Daily quote**                 | A deterministic quote is selected for each calendar day and shown on page load. It stays consistent throughout the day and changes when the local calendar date changes (no reload required on next interaction). |
+| **Category-based filtering**    | Filter the feed by theme — Philosophy, Resilience, Love, Courage, Wisdom, Work, Life, Humor, and many more (auto-derived from the data). An _All_ option shows the entire collection.                             |
+| **Author attribution with bio** | Every quote shows the author's name and a short contextual bio (e.g. "Greek philosopher, 470–399 BC"), giving the words a human background.                                                                       |
+| **Copy-to-clipboard**           | Copies the formatted quote + author to the clipboard using the modern Clipboard API, with a legacy `textarea`/`execCommand` fallback for older browsers.                                                          |
+| **Twitter sharing**             | Opens a pre-filled Twitter (X) intent tweet with the quote and author, ready to post.                                                                                                                             |
+| **Progress tracking**           | A counter shows how many quotes you have explored, and a footer progress bar fills as you work through the currently filtered set.                                                                                |
+| **Toast notifications**         | Lightweight, auto-dismissing toast confirms copy actions for clear UI feedback.                                                                                                                                   |
+| **Responsive design**           | A two-column editorial layout on desktop collapses into a single column on small screens (≤ 700px).                                                                                                               |
+| **Animated transitions**        | Quotes fade up into view and cross-fade on change for a calm, reading-friendly experience.                                                                                                                        |
 
 ---
 
@@ -106,12 +107,17 @@ The collection currently holds **~300 quotes** spanning philosophers (Socrates, 
 
 ### Quote Selection Logic
 
-The `nextQuote()` function drives display:
+On each page load, a deterministic **daily quote** is selected from the collection based on the local calendar date. It is shown first and registered in `seenIndices` so it won't repeat during the session. The daily quote stays consistent throughout the day and changes when the calendar date changes (detected on load and on the next "New Quote" interaction).
 
-1. It resolves the active pool via `getFiltered()` (either `ALL_QUOTES` or a single category).
-2. It keeps a `seenIndices` array to remember which quotes in the pool have already been shown this round.
-3. When `seenIndices` covers the whole pool, it resets so the cycle can repeat without repeats within a round.
-4. It picks a random index that is **not already in `seenIndices`** (guaranteeing no immediate duplicate), pushes it, increments `exploredCount`, and renders.
+The `nextQuote()` function drives subsequent random display:
+
+1. If the local calendar date has changed since the last recorded day, the app resets to the new daily quote.
+2. It resolves the active pool via `getFiltered()` (either `ALL_QUOTES` or a single category).
+3. It keeps a `seenIndices` array to remember which quotes in the pool have already been shown this round.
+4. When `seenIndices` covers the whole pool, it resets so the cycle can repeat without repeats within a round.
+5. It picks a random index that is **not already in `seenIndices`** (guaranteeing no duplicate within a round), pushes it, increments `exploredCount`, and renders.
+
+`exploredCount` reflects the actual number of quotes shown this session and is synchronized with the sidebar counter. The progress bar reflects progress through the currently filtered set (`seenIndices.length / filteredQuotes.length`).
 
 ### Category Filtering
 
@@ -120,7 +126,7 @@ The `nextQuote()` function drives display:
 
 ### Sharing
 
-- **Copy** (`copyBtn`): builds `"<text>" — <author>` and writes it to the clipboard. If the async Clipboard API rejects (e.g. insecure context), it falls back to a temporary `textarea` + `document.execCommand('copy')`. A toast confirms success.
+- **Copy** (`copyBtn`): builds `"<text>" — <author>` and writes it to the clipboard. It first checks for the modern Clipboard API (`navigator.clipboard.writeText`) and only uses it when available. If unavailable or rejected, it falls back to a temporary `textarea` + `document.execCommand('copy')`. Success is verified before showing the "Copied to clipboard!" toast; if both methods fail, an error toast ("Failed to copy quote.") is shown instead.
 - **Twitter** (`tweetBtn`): URL-encodes the same string and opens `https://twitter.com/intent/tweet?text=...` in a new tab.
 
 ### State & UI Feedback
@@ -172,9 +178,11 @@ To change the visual theme, edit the CSS custom properties at the top of `style.
 ## Design & Accessibility
 
 - **Typography-first**: serif display type (Playfair Display) for quotes and a clean sans (DM Sans) for UI, evoking a print "wisdom edition."
-- **Responsive**: single-column layout under 700px keeps quotes readable on phones.
-- **Reduced motion**: the entrance/transition animations are short and subtle; they can be disabled by wrapping the keyframes in a `prefers-reduced-motion` media query if desired.
-- **Iconography**: Font Awesome is used for the refresh icon; icons carry `aria-hidden` and the buttons have text labels for screen readers.
+- **Responsive**: two-column editorial layout on desktop collapses to a single column at ≤ 700px (and ≤ 900px narrows the sidebar); smaller phones (≤ 390px) get reduced padding and tighter typography. Verified at 360, 390, 768, 820, 1024, 1440, and 1920px viewports with no horizontal overflow.
+- **Keyboard focus**: visible `:focus-visible` outline (accent color) on all buttons and links.
+- **Reduced motion**: animations and transitions are disabled under `prefers-reduced-motion: reduce`.
+- **ARIA**: category filter pills expose `aria-pressed`; the toast is an ARIA live region (`role="status"`, `aria-live="polite"`); decorative icons carry `aria-hidden="true"`; all buttons have visible text labels.
+- **WCAG 2.2 AA**: color contrast, focus indicators, and live-region feedback follow WCAG 2.2 AA principles without altering the visual identity.
 
 ---
 
@@ -183,7 +191,7 @@ To change the visual theme, edit the CSS custom properties at the top of `style.
 QuoteX is installable and works offline thanks to two additions:
 
 - **Web App Manifest** (`manifest.webmanifest`) — defines the app name, `standalone` display mode, theme/background colors, start URL, and icons (`icon.svg` for general use, `icon-maskable.svg` for maskable/safe-zone use).
-- **Service Worker** (`sw.js`) — registered in `script.js` on `window.load`. It precaches the app shell (`index.html`, `style.css`, `script.js`, manifest, and icons) on install, cleans up old caches on activate, and serves a cache-first / network-fallback strategy on `fetch`, falling back to `index.html` when offline.
+- **Service Worker** (`sw.js`) — registered in `script.js` on `window.load`. It uses a versioned cache (`quotex-v2`) that is invalidated on each deploy (old caches are deleted on activate). Navigation requests use a network-first strategy with an `index.html` offline fallback, while static assets (CSS, JS, images, fonts) use cache-first with graceful degradation (empty 204 response when both cache and network fail) so a missing image or font never returns HTML. `skipWaiting` and `clients.claim` ensure updates take effect immediately without leaving users on stale files.
 
 ### Requirements to run as a PWA
 
@@ -194,7 +202,9 @@ QuoteX is installable and works offline thanks to two additions:
    ```
 
    then open `http://localhost:8000`.
-2. **Icons** — the SVG icons satisfy most modern browsers. For maximum install compatibility on all platforms, add **192px and 512px PNG** icons and list them in the manifest's `icons` array.
+
+2. **Icons** — `icon.svg` (general purpose) and `icon-maskable.svg` (maskable) are provided as SVG. For maximum install compatibility on all platforms, add **192px and 512px PNG** icons and list them in the manifest's `icons` array.
+3. **Social image** — `og-image.svg` (1200×630) is provided for Open Graph / Twitter previews and referenced from `index.html`.
 
 The core experience (quotes, filtering, UI) is fully functional offline once cached. External CDN assets (Google Fonts, Font Awesome) load over the network and gracefully degrade to system fonts/fallback icons when offline.
 
@@ -202,12 +212,12 @@ The core experience (quotes, filtering, UI) is fully functional offline once cac
 
 The page is SEO-ready out of the box via meta tags and structured data in `index.html`:
 
-- **Standard meta** — `description`, `keywords`, `author`, `robots`, `theme-color`, and a `canonical` link.
-- **Open Graph** — `og:type`, `og:title`, `og:description`, `og:site_name`, `og:url`, `og:image` for rich Facebook/Discord/LinkedIn previews.
-- **Twitter Card** — `twitter:card` (summary_large_image), `twitter:title`, `twitter:description`, `twitter:image` for share previews on X.
+- **Standard meta** — `description`, `keywords`, `author`, `robots`, `theme-color`, and a `canonical` link pointing to `https://quotex-seven-ebon.vercel.app/`.
+- **Open Graph** — `og:type`, `og:title`, `og:description`, `og:site_name`, `og:url`, `og:image` (1200×630 SVG) with dimensions and alt text.
+- **Twitter Card** — `twitter:card` (summary_large_image), `twitter:title`, `twitter:description`, `twitter:image`, `twitter:site` for share previews on X.
 - **Structured data** — a JSON-LD `WebApplication` block describing the app for search engines.
 
-> **Before deploying**, replace the placeholder `https://quotex.example.com/` URLs (canonical, OG, Twitter image) in `index.html` with your real domain, and host a real `og-image.png` (1200×630 recommended). Note that quotes are injected by JavaScript, so only the first static quote in the HTML is crawler-visible; for full quote indexing, add server-side rendering or a sitemap/prerender.
+All URLs reference the production domain `https://quotex-seven-ebon.vercel.app/`; no placeholder domains or nonexistent image assets are referenced. Quotes are injected by JavaScript, so only the first static quote in the HTML is crawler-visible; for full quote indexing, add server-side rendering or a sitemap/prerender.
 
 ## Browser Support
 
