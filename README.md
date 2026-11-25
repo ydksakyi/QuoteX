@@ -203,7 +203,7 @@ QuoteX is installable and works offline thanks to two additions:
 
    then open `http://localhost:8000`.
 
-2. **Icons** — `icon.svg` (general purpose) and `icon-maskable.svg` (maskable) are provided as SVG. For maximum install compatibility on all platforms, add **192px and 512px PNG** icons and list them in the manifest's `icons` array.
+2. **Icons** — `icon.svg` and `icon-maskable.svg` (SVG, general and maskable purposes) plus `icon-192.png`, `icon-512.png`, `icon-maskable-192.png`, and `icon-maskable-512.png` (PNG) are provided and listed in the manifest's `icons` array for maximum install compatibility across platforms.
 3. **Social image** — `og-image.svg` (1200×630) is provided for Open Graph / Twitter previews and referenced from `index.html`.
 
 The core experience (quotes, filtering, UI) is fully functional offline once cached. External CDN assets (Google Fonts, Font Awesome) load over the network and gracefully degrade to system fonts/fallback icons when offline.
